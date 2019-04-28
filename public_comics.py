@@ -4,6 +4,14 @@ import random
 from dotenv import load_dotenv
 
 
+def print_error_message(response):
+    if response.get('error'):
+        error_message = '{}. Code: {}\nRequest params:{}'.format(response['error']['error_msg'],
+                                                                 response['error']['error_code'],
+                                                                 response['error']['request_params'])
+        print(error_message)
+
+
 def get_file_extension(file_url):
     return file_url.split('.')[-1]
 
@@ -38,7 +46,11 @@ def get_random_comic_from_xkcd():
 def get_upload_server(api_url, params):
     method = 'photos.getWallUploadServer'
     response = requests.get(api_url.format(method), params=params)
-    return response.json()['response']['upload_url']
+
+    try:
+        return response.json()['response']['upload_url']
+    except KeyError:
+        exit(print_error_message(response.json()))
 
 
 def upload_comic_to_server(upload_url, comic):
@@ -48,19 +60,28 @@ def upload_comic_to_server(upload_url, comic):
         }
         response = requests.post(upload_url, files=files)
 
-    return response.json()['server'], response.json()['photo'], response.json()['hash']
+    try:
+        return response.json()['server'], response.json()['photo'], response.json()['hash']
+    except KeyError:
+        exit(print_error_message(response.json()))
 
 
 def save_comic_in_album(api_url, params, data):
     method = 'photos.saveWallPhoto'
     response = requests.post(api_url.format(method), data=data, params=params)
-    return response.json()['response'][0]['owner_id'], response.json()['response'][0]['id']
+    try:
+        return response.json()['response'][0]['owner_id'], response.json()['response'][0]['id']
+    except KeyError:
+        exit(print_error_message(response.json()))
 
 
 def publish_comic(api_url, params):
     method = 'wall.post'
     response = requests.get(api_url.format(method), params=params)
-    return response.json()
+    try:
+        return response.json()
+    except KeyError:
+        exit(print_error_message(response.json()))
 
 
 def main():
@@ -73,7 +94,11 @@ def main():
         'v': 5.95,
     }
 
-    comic, author_comment = get_random_comic_from_xkcd()
+    try:
+        comic, author_comment = get_random_comic_from_xkcd()
+    except requests.exceptions.HTTPError as error:
+        exit("Can't get data from server xkcd:\n{0}".format(error))
+
     upload_url = get_upload_server(api_url, params)
     server, photo, hash_comic = upload_comic_to_server(upload_url, comic)
     os.remove(comic)
