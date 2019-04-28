@@ -17,16 +17,19 @@ def download_and_save_image(url, filename):
         f.write(response.content)
 
 
-def get_comic_from_xkcd():
+def get_random_comic_from_xkcd():
     postfix = 'info.0.json'
-    url = 'https://xkcd.com/1296/{}'.format(postfix)
 
+    base_url = 'https://xkcd.com/{}'
+    number_last_comic = requests.get(base_url.format(postfix)).json()['num']
+    number_comic = random.randint(1, number_last_comic)
+
+    url = 'https://xkcd.com/{}/{}'.format(number_comic, postfix)
     response = requests.get(url)
     response.raise_for_status()
 
     url_comic = response.json()['img']
     author_comment = response.json()['alt']
-
     filename = '{}.{}'.format(response.json()['title'], get_file_extension(url_comic))
     download_and_save_image(url_comic, filename)
 
@@ -36,7 +39,6 @@ def get_comic_from_xkcd():
 def get_upload_server(api_url, params):
     method = 'photos.getWallUploadServer'
     response = requests.get(api_url.format(method), params=params)
-    print(response)
     return response.json()['response']['upload_url']
 
 
@@ -73,7 +75,7 @@ def main():
         'v': 5.95,
     }
 
-    comic, author_comment = get_comic_from_xkcd()
+    comic, author_comment = get_random_comic_from_xkcd()
     upload_url = get_upload_server(api_url, params)
     server, photo, hash_comic = upload_comic_to_server(upload_url, comic)
 
