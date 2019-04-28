@@ -1,16 +1,13 @@
 # vk-comics
 
 ## Описание
-vk-comics выполняет автопубликацию комиксов 
+*vk-comics* выполняет автопубликацию случайных комиксов с сайта [xkcd](https://xkcd.com/) в группу вконтакте.
 
-Статистика по языкам:
-
-Javascript, Java, Python, Ruby, Php, C++, C#, C, Go, Scala
 
 
 Использованные API:
-* [HeadHunter](https://github.com/hhru/api/blob/master/README.md#headhunter-api)
-* [SuperJob](https://api.superjob.ru/)
+* [VK API](https://vk.com/dev/manuals)
+* [xkcd](https://xkcd.com/json.html)
 ## Требования
 
 Для запуска скрипта требуется:
@@ -32,16 +29,16 @@ sudo apt-get install python3-pip
 2. Установить зависимости и скачать сам проект:
 
 ```sh
-git clone https://github.com/Safintim/hh-superjob.git
+git clone https://github.com/Safintim/vk-comics.git
 pip3 install -r requirements.txt
 ```
 
 ## Как использовать: 
 ```sh
-python3 hh_superjob.py
+python3 public_comics.py
 ```
 
 ## Пример вывода :
-![Alt Text]()
+![Alt Text](http://ipic.su/img/img7/fs/vk_comics.1556451229.gif)
 
 
