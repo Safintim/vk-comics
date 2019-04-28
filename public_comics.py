@@ -119,7 +119,6 @@ def main():
     publish_comic(api_url, params)
 
 
-
 if __name__ == '__main__':
     main()
 
