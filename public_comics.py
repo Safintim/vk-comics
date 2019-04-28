@@ -1,7 +1,6 @@
 import os
 import requests
 import random
-from pprint import pprint
 from dotenv import load_dotenv
 
 
@@ -78,13 +77,12 @@ def main():
     comic, author_comment = get_random_comic_from_xkcd()
     upload_url = get_upload_server(api_url, params)
     server, photo, hash_comic = upload_comic_to_server(upload_url, comic)
-
+    os.remove(comic)
     data = {
         'server': server,
         'photo': photo,
         'hash': hash_comic
     }
-
     owner_id_comic, media_id_comic = save_comic_in_album(api_url, params, data)
     params_add = {
         'owner_id': -group_id,
