@@ -65,7 +65,7 @@ def publish_comic(api_url, params):
 
 def main():
     load_dotenv()
-    group_id = 181677110
+    group_id = os.getenv('group_id')
     vk_token = os.getenv('vk_token')
     api_url = 'https://api.vk.com/method/{}'
     params = {
