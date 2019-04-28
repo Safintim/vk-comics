@@ -1,5 +1,6 @@
 import os
 import requests
+import random
 from pprint import pprint
 from dotenv import load_dotenv
 
@@ -23,13 +24,12 @@ def get_comic_from_xkcd():
     response = requests.get(url)
     response.raise_for_status()
 
-    object_comic = response.json()
-    url_comic = object_comic['img']
-    author_comment = object_comic['alt']
+    url_comic = response.json()['img']
+    author_comment = response.json()['alt']
 
-    filename = '{}.{}'.format(object_comic['title'], get_file_extension(url_comic))
+    filename = '{}.{}'.format(response.json()['title'], get_file_extension(url_comic))
     download_and_save_image(url_comic, filename)
-    print(author_comment)
+
     return filename, author_comment
 
 
