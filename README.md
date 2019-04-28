@@ -38,7 +38,7 @@ pip3 install -r requirements.txt
 python3 public_comics.py
 ```
 
-## Пример вывода :
+## Пример использования:
 ![Alt Text](http://ipic.su/img/img7/fs/vk_comics.1556451229.gif)
 
 
