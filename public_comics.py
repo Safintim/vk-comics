@@ -42,12 +42,11 @@ def get_upload_server(api_url, params):
 
 
 def upload_comic_to_server(upload_url, comic):
-    comic = open(comic, 'rb')
-    files = {
-        'photo': comic,
-    }
-    response = requests.post(upload_url, files=files)
-    comic.close()
+    with open(comic, 'rb') as comic:
+        files = {
+            'photo': comic,
+        }
+        response = requests.post(upload_url, files=files)
 
     return response.json()['server'], response.json()['photo'], response.json()['hash']
 
