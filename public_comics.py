@@ -101,7 +101,6 @@ def main():
 
     upload_url = get_upload_server(api_url, params)
     server, photo, hash_comic = upload_comic_to_server(upload_url, comic)
-    os.remove(comic)
     data = {
         'server': server,
         'photo': photo,
@@ -117,6 +116,7 @@ def main():
 
     params.update(params_add)
     publish_comic(api_url, params)
+    os.remove(comic)
 
 
 if __name__ == '__main__':
