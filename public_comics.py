@@ -65,6 +65,7 @@ def post_comic_in_vk(api_url, params):
     response = requests.get(api_url.format(method), params=params)
     return response.json()
 
+
 def download_comic():
     try:
         return get_random_comic_from_xkcd()
@@ -99,10 +100,13 @@ def publish_comic(vk_token, group_id, comic, author_comment):
     post_comic_in_vk(api_url, params)
 
 
+def get_token_and_group_id():
+    return int(os.getenv('group_id')), os.getenv('vk_token')
+
+
 def main():
     load_dotenv()
-    group_id = int(os.getenv('group_id'))
-    vk_token = os.getenv('vk_token')
+    group_id, vk_token = get_token_and_group_id()
 
     comic, author_comment = download_comic()
     publish_comic(vk_token, group_id, comic, author_comment)
