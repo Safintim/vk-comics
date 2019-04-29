@@ -12,10 +12,6 @@ def print_error_message(response):
         print(error_message)
 
 
-def get_file_extension(file_url):
-    return file_url.split('.')[-1]
-
-
 def download_and_save_image(url, filename):
     response = requests.get(url)
     response.raise_for_status()
@@ -37,7 +33,7 @@ def get_random_comic_from_xkcd():
 
     url_comic = response.json()['img']
     author_comment = response.json()['alt']
-    filename = '{}.{}'.format(response.json()['title'], get_file_extension(url_comic))
+    filename = '{}{}'.format(response.json()['title'], os.path.splitext(url_comic)[1])
     download_and_save_image(url_comic, filename)
 
     return filename, author_comment
