@@ -4,12 +4,9 @@ import random
 from dotenv import load_dotenv
 
 
-def print_error_message(response):
-    if response.get('error'):
-        error_message = '{}. Code: {}\nRequest params:{}'.format(response['error']['error_msg'],
-                                                                 response['error']['error_code'],
-                                                                 response['error']['request_params'])
-        print(error_message)
+def raise_error(response):
+    if 'error' in response:
+        raise requests.exceptions.HTTPError(response['error'])
 
 
 def download_and_save_image(url, filename):
@@ -42,6 +39,7 @@ def get_random_comic_from_xkcd():
 def get_upload_server(api_url, params):
     method = 'photos.getWallUploadServer'
     response = requests.get(api_url.format(method), params=params)
+    raise_error(response.json())
     return response.json()['response']['upload_url']
 
 
@@ -51,26 +49,22 @@ def upload_comic_to_server(upload_url, comic):
             'photo': comic,
         }
         response = requests.post(upload_url, files=files)
+        raise_error(response.json())
     return response.json()['server'], response.json()['photo'], response.json()['hash']
 
 
 def save_comic_in_album(api_url, params, data):
     method = 'photos.saveWallPhoto'
     response = requests.post(api_url.format(method), data=data, params=params)
+    raise_error(response.json())
     return response.json()['response'][0]['owner_id'], response.json()['response'][0]['id']
 
 
 def post_comic_in_vk(api_url, params):
     method = 'wall.post'
     response = requests.get(api_url.format(method), params=params)
+    raise_error(response.json())
     return response.json()
-
-
-def download_comic():
-    try:
-        return get_random_comic_from_xkcd()
-    except requests.exceptions.HTTPError as error:
-        exit("Can't get data from server xkcd:\n{0}".format(error))
 
 
 def publish_comic(vk_token, group_id, comic, author_comment):
@@ -108,8 +102,15 @@ def main():
     load_dotenv()
     group_id, vk_token = get_token_and_group_id()
 
-    comic, author_comment = download_comic()
-    publish_comic(vk_token, group_id, comic, author_comment)
+    try:
+        comic, author_comment = get_random_comic_from_xkcd()
+    except requests.exceptions.HTTPError as error:
+        exit("Can't get data from server xkcd:\n{0}".format(error))
+
+    try:
+        publish_comic(vk_token, group_id, comic, author_comment)
+    except requests.exceptions.HTTPError as e:
+        exit(e)
 
 
 if __name__ == '__main__':
